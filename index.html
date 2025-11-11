@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<title>Roasting Character</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			body {
+				font-family: 'Comic Sans MS', cursive, sans-serif;
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				min-height: 100vh;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				overflow: hidden;
+				cursor: none !important;
+			}
+
+			.container {
+				text-align: center;
+				position: relative;
+				z-index: 10;
+			}
+
+			.face {
+				position: relative;
+				width: 300px;
+				height: 300px;
+				margin: 0 auto 30px;
+				filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+			}
+
+			.face-circle {
+				width: 100%;
+				height: 100%;
+				background: #ffd93d;
+				border-radius: 50%;
+				position: relative;
+				border: 8px solid #333;
+				transition: background-color 0.5s ease;
+			}
+
+			.face-circle.angry {
+				background: #ff4444;
+			}
+
+			.eyes {
+				display: flex;
+				justify-content: space-around;
+				padding: 0 60px;
+				position: absolute;
+				top: 80px;
+				width: 100%;
+			}
+
+			.eye {
+				width: 60px;
+				height: 80px;
+				background: white;
+				border-radius: 50%;
+				position: relative;
+				overflow: hidden;
+				border: 4px solid #333;
+			}
+
+			.pupil {
+				width: 25px;
+				height: 25px;
+				background: #333;
+				border-radius: 50%;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				transition: all 0.1s ease;
+			}
+
+			.eyebrow {
+				position: absolute;
+				width: 70px;
+				height: 8px;
+				background: #333;
+				border-radius: 4px;
+				top: 60px;
+				transition: all 0.3s ease;
+			}
+
+			.eyebrow.left {
+				left: 45px;
+				transform: rotate(-10deg);
+			}
+
+			.eyebrow.right {
+				right: 45px;
+				transform: rotate(10deg);
+			}
+
+			.eyebrow.angry {
+				top: 70px;
+			}
+
+			.eyebrow.left.angry {
+				transform: rotate(-25deg);
+			}
+
+			.eyebrow.right.angry {
+				transform: rotate(25deg);
+			}
+
+			.mouth {
+				position: absolute;
+				bottom: 60px;
+				left: 50%;
+				transform: translateX(-50%);
+				width: 120px;
+				height: 60px;
+				border: 4px solid #333;
+				border-top: none;
+				border-radius: 0 0 120px 120px;
+				transition: all 0.3s ease;
+			}
+
+			.mouth.laughing {
+				width: 140px;
+				height: 70px;
+				animation: laugh-mouth 0.5s ease infinite;
+			}
+
+			@keyframes laugh-mouth {
+				0%,
+				100% {
+					transform: translateX(-50%) scale(1);
+				}
+				50% {
+					transform: translateX(-50%) scale(1.1);
+				}
+			}
+
+			.mouth.smirk {
+				border-radius: 0 0 80px 120px;
+				transform: translateX(-50%) rotate(-5deg);
+			}
+
+			.speech-bubble {
+				background: white;
+				border-radius: 20px;
+				padding: 25px 35px;
+				font-size: 24px;
+				font-weight: bold;
+				color: #333;
+				position: relative;
+				display: inline-block;
+				max-width: 600px;
+				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+				min-height: 80px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+
+			.speech-bubble::after {
+				content: '';
+				position: absolute;
+				top: -20px;
+				left: 50%;
+				transform: translateX(-50%);
+				width: 0;
+				height: 0;
+				border-left: 20px solid transparent;
+				border-right: 20px solid transparent;
+				border-bottom: 20px solid white;
+			}
+
+			.buttons {
+				margin-top: 40px;
+				display: flex;
+				gap: 20px;
+				justify-content: center;
+			}
+
+			button {
+				padding: 15px 40px;
+				font-size: 18px;
+				font-weight: bold;
+				border: none;
+				border-radius: 50px;
+				cursor: none;
+				transition: all 0.3s ease;
+				box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+			}
+
+			#continueBtn {
+				background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
+				color: white;
+			}
+
+			#continueBtn:hover {
+				transform: translateY(-3px);
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+			}
+
+			#cancelBtn {
+				background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
+				color: white;
+			}
+
+			#cancelBtn:hover {
+				transform: translateY(-3px);
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+			}
+
+			.custom-cursor {
+				position: fixed;
+				width: 20px;
+				height: 20px;
+				border: 3px solid white;
+				border-radius: 50%;
+				pointer-events: none;
+				z-index: 9999;
+				transition: transform 0.1s ease;
+				box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+			}
+
+			.custom-cursor.hovering {
+				transform: scale(1.5);
+				background: rgba(255, 255, 255, 0.3);
+			}
+
+			.face.shaking {
+				animation: shake 0.3s ease infinite;
+			}
+
+			@keyframes shake {
+				0%,
+				100% {
+					transform: rotate(0deg);
+				}
+				25% {
+					transform: rotate(-5deg);
+				}
+				75% {
+					transform: rotate(5deg);
+				}
+			}
+
+			@media (max-width: 768px) {
+				.face {
+					width: 200px;
+					height: 200px;
+				}
+				.speech-bubble {
+					font-size: 18px;
+					padding: 20px 25px;
+					max-width: 90%;
+				}
+				button {
+					font-size: 16px;
+					padding: 12px 30px;
+				}
+			}
+
+			/* ABSOLUTE cursor removal override */
+			html,
+			body,
+			button,
+			a,
+			input,
+			textarea,
+			select,
+			.custom-cursor,
+			*,
+			*::before,
+			*::after {
+				cursor: none !important;
+			}
+		</style>
+	</head>
+	<body>
+		<div
+			class="custom-cursor"
+			id="cursor"
+		></div>
+
+		<div class="container">
+			<div
+				class="face"
+				id="face"
+			>
+				<div class="face-circle">
+					<div
+						class="eyebrow left"
+						id="leftBrow"
+					></div>
+					<div
+						class="eyebrow right"
+						id="rightBrow"
+					></div>
+					<div class="eyes">
+						<div class="eye">
+							<div
+								class="pupil"
+								id="leftPupil"
+							></div>
+						</div>
+						<div class="eye">
+							<div
+								class="pupil"
+								id="rightPupil"
+							></div>
+						</div>
+					</div>
+					<div
+						class="mouth"
+						id="mouth"
+					></div>
+				</div>
+			</div>
+			<div
+				class="speech-bubble"
+				id="speechBubble"
+			>
+				So... you think you can handle this conversation?
+			</div>
+			<div class="buttons">
+				<button id="continueBtn">👍 Like</button>
+				<button id="cancelBtn">👎 Dislike</button>
+			</div>
+		</div>
+
+		<script>
+			const face = document.getElementById('face');
+			const speechBubble = document.getElementById('speechBubble');
+			const continueBtn = document.getElementById('continueBtn');
+			const cancelBtn = document.getElementById('cancelBtn');
+			const cursor = document.getElementById('cursor');
+			const leftPupil = document.getElementById('leftPupil');
+			const rightPupil = document.getElementById('rightPupil');
+			const mouth = document.getElementById('mouth');
+			const leftBrow = document.getElementById('leftBrow');
+			const rightBrow = document.getElementById('rightBrow');
+
+			let currentState = 'idle';
+			let mouseOverCancel = false;
+			let continueClickCount = 0;
+			let hasRoastedEscape = false;
+
+			const roasts = {
+				tryingToEscape: [
+					"OH NO YOU DON'T! Trying to close the tab? COWARD! 🏃‍♂️💨",
+					"I SEE YOU going for that X button! Can't handle the truth? 😤",
+					'ESCAPE attempt detected! Running away already? Pathetic! 🙄',
+					"Trying to minimize me? I'M TOO IMPORTANT FOR THAT! 👑",
+					"Oh PLEASE don't leave! ...Just kidding, I saw you trying to bail! 😂",
+					'Going for the close button? The truth hurts that much, huh? 💀',
+					'Nah nah nah! I see that mouse heading for freedom! STAY HERE! 🛑',
+					"You're really gonna ALT+F4 me? WOW. Just WOW. 😮‍💨",
+				],
+				approachingCancel: [
+					'Oh? Getting cold feet already? 😏',
+					'I can SEE you moving toward Cancel... coward 👀',
+					"Don't you DARE click that Cancel button 😤",
+					"Really? You're gonna run away? Typical. 🙄",
+					'Ohhh I see that mouse creeping toward Cancel... 👁️👁️',
+				],
+				hoveringCancel: [
+					"LOL you can't handle the heat, can you? 🔥",
+					'Oh WOW. Actually hovering over Cancel. Shocking. 😮',
+					'Go ahead, click it. Prove me right about you 💅',
+					'I KNEW you were gonna chicken out! 🐔',
+					'Too spicy for you? Need your blankie? 👶',
+					'Run along now, quitter! 🏃‍♂️💨',
+					"Awww is someone's ego too fragile? 🥺",
+				],
+				continueHover: [
+					'Finally! Some sense! 😌',
+					'Good choice... I guess 🙄',
+					"Oh wow, you're actually staying? Brave. 💪",
+					"Continue, yes! Let's see what you got! 😎",
+				],
+				continueClick: [
+					"That's what I thought! You can't resist me 😎",
+					"See? I knew you'd stay! 💪",
+					"Welcome back, brave soul! Let's do this! 🔥",
+					"NOW we're talking! Let's GO! 🚀",
+				],
+			};
+
+			// Eye tracking
+			function updatePupils(x, y) {
+				const faceRect = face.getBoundingClientRect();
+				const faceCenterX = faceRect.left + faceRect.width / 2;
+				const faceCenterY = faceRect.top + faceRect.height / 2;
+
+				const angle = Math.atan2(y - faceCenterY, x - faceCenterX);
+				const distance = Math.min(
+					15,
+					Math.hypot(x - faceCenterX, y - faceCenterY) / 20
+				);
+
+				const pupilX = Math.cos(angle) * distance;
+				const pupilY = Math.sin(angle) * distance;
+
+				leftPupil.style.transform = `translate(calc(-50% + ${pupilX}px), calc(-50% + ${pupilY}px))`;
+				rightPupil.style.transform = `translate(calc(-50% + ${pupilX}px), calc(-50% + ${pupilY}px))`;
+			}
+
+			// Custom cursor
+			document.addEventListener('mousemove', (e) => {
+				cursor.style.left = e.clientX + 'px';
+				cursor.style.top = e.clientY + 'px';
+				updatePupils(e.clientX, e.clientY);
+
+				// Check if mouse is near top of screen (trying to close/minimize)
+				if (e.clientY < 100 && !hasRoastedEscape) {
+					hasRoastedEscape = true;
+					currentState = 'escaping';
+					face.classList.add('shaking');
+					leftBrow.classList.add('angry');
+					rightBrow.classList.add('angry');
+					mouth.className = 'mouth';
+					const roast =
+						roasts.tryingToEscape[
+							Math.floor(Math.random() * roasts.tryingToEscape.length)
+						];
+					speechBubble.textContent = roast;
+
+					setTimeout(() => {
+						face.classList.remove('shaking');
+						hasRoastedEscape = false;
+					}, 3000);
+				} else if (e.clientY > 100) {
+					hasRoastedEscape = false;
+				}
+
+				// Check distance to cancel button
+				const cancelRect = cancelBtn.getBoundingClientRect();
+				const distance = Math.hypot(
+					e.clientX - (cancelRect.left + cancelRect.width / 2),
+					e.clientY - (cancelRect.top + cancelRect.height / 2)
+				);
+
+				if (
+					distance < 150 &&
+					distance > 50 &&
+					!mouseOverCancel &&
+					currentState !== 'continueHover' &&
+					currentState !== 'escaping'
+				) {
+					currentState = 'approachingCancel';
+					leftBrow.classList.add('angry');
+					rightBrow.classList.add('angry');
+					mouth.className = 'mouth';
+					const roast =
+						roasts.approachingCancel[
+							Math.floor(Math.random() * roasts.approachingCancel.length)
+						];
+					speechBubble.textContent = roast;
+				}
+			});
+
+			cancelBtn.addEventListener('mouseenter', () => {
+				mouseOverCancel = true;
+				currentState = 'cancelHover';
+				mouth.className = 'mouth laughing';
+				leftBrow.classList.add('angry');
+				rightBrow.classList.add('angry');
+				const roast =
+					roasts.hoveringCancel[
+						Math.floor(Math.random() * roasts.hoveringCancel.length)
+					];
+				speechBubble.textContent = roast;
+				cursor.classList.add('hovering');
+			});
+
+			cancelBtn.addEventListener('mouseleave', () => {
+				mouseOverCancel = false;
+				currentState = 'idle';
+				mouth.className = 'mouth smirk';
+				leftBrow.classList.remove('angry');
+				rightBrow.classList.remove('angry');
+				speechBubble.textContent = "That's right... come back... 😈";
+				cursor.classList.remove('hovering');
+			});
+
+			continueBtn.addEventListener('mouseenter', () => {
+				currentState = 'continueHover';
+				mouth.className = 'mouth';
+				leftBrow.classList.remove('angry');
+				rightBrow.classList.remove('angry');
+				speechBubble.textContent =
+					roasts.continueHover[
+						Math.floor(Math.random() * roasts.continueHover.length)
+					];
+				cursor.classList.add('hovering');
+			});
+
+			continueBtn.addEventListener('mouseleave', () => {
+				cursor.classList.remove('hovering');
+			});
+
+			continueBtn.addEventListener('click', () => {
+				continueClickCount++;
+				mouth.className = 'mouth';
+				leftBrow.classList.remove('angry');
+				rightBrow.classList.remove('angry');
+				speechBubble.textContent =
+					roasts.continueClick[
+						Math.floor(Math.random() * roasts.continueClick.length)
+					];
+			});
+
+			cancelBtn.addEventListener('click', () => {
+				mouth.className = 'mouth laughing';
+				face.classList.add('shaking');
+				leftBrow.classList.add('angry');
+				rightBrow.classList.add('angry');
+				speechBubble.textContent =
+					"HAHAHA! I KNEW IT! You couldn't handle me! 💀";
+
+				setTimeout(() => {
+					speechBubble.textContent = 'Thanks for proving my point! Bye bye! 👋';
+				}, 2000);
+			});
+
+			// Initial neutral expression
+			mouth.className = 'mouth smirk';
+		</script>
+	</body>
+</html>
